@@ -1,0 +1,19 @@
+{
+  "name": "mental-arithmetic-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fenlgy/mental-arithmetic-generator.git"
+  },
+  "author": "FEN",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fenlgy/mental-arithmetic-generator/issues"
+  },
+  "homepage": "https://github.com/fenlgy/mental-arithmetic-generator#readme"
+}
