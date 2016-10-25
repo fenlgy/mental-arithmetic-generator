@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/styles/index.less">
+<body>
+<div id="header">
+    <div class="wrapper"><h1>幼儿口算题在线生成工具</h1></div>
+</div>
+<div class="bg">
+    <div class="wrapper">
+        <div class="content">
+            <div id="page">
+                <table id="data-table" width="100%"></table>
+            </div>
+        </div>
+        <div class="sidebar">
+            <div class="form__line">
+                <input type="checkbox" id="addition" value="addition" checked><label for="addition">加法</label>
+                <input type="checkbox" id="subtraction" value="subtraction"><label for="subtraction">减法</label>
+                <input type="checkbox" id="division" value="division"><label for="division">除法</label>
+                <!--<input type="checkbox" id="multiplication" value="multiplication"><label for="multiplication">乘法</label>-->
+            </div>
+            <div class="form__line">
+                <input type="text" value="10" id="range"> 以内<span id="j-text">加法</span>
+            </div>
+            <div class="form__line">
+                <button id="make" class="btn">重新生成</button>
+                <button id="print" class="btn">直接打印</button>
+                <button id="export" class="btn btn--normal">下载 word 文件</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="//cdn.bootcss.com/jquery/1.10.2/jquery.js"></script>
+<script src="js/FileSaver.js"></script>
+<script src="js/jquery-word-export.js"></script>
+<script>
+
+    var make = function (opt) {
+        var page = document.getElementById('data-table');
+        var z = '<tr>';
+        var range = opt.range;
+        var randomNum = function (min,max) {
+            switch(arguments.length){
+                case 1: return Math.ceil(Math.random()*min);
+                case 2: return Math.ceil(Math.random()*(max-min) + min);
+                default: return 0;
+            }
+        }
+        var types = {
+            addition: {
+                fn: function () {
+                    var x = randomNum(range);
+                    var y = randomNum(range - x);
+                    return [x, y]
+                },
+                symbol: '+'
+            },
+            subtraction: {
+                fn: function () {
+                    var x = randomNum(range);
+                    var y = randomNum(x)
+                    return [x, y]
+                },
+                symbol: '-'
+            },
+            division: {
+                fn: function () {
+                    var x = randomNum(4,range);
+                    var y = randomNum(2,x );
+                    var i = x % y;
+console.log(x)
+
+                    while (!!i) {
+                        x = randomNum(3,range);
+                        y = randomNum(1,x);
+                        i = x % y;
+                    }
+                    return [x, y];
+                },
+                symbol: '÷'
+            },
+            multiplication: {
+                fn: function (x) {
+                    return randomNum(range / x);
+                },
+                symbol: '×'
+            }
+        };
+
+        for (var i = 1; i <= opt.max; i++) {
+            var type = opt.type[Math.floor(Math.random() * opt.type.length)];
+            var num = types[type].fn();
+            if (i == opt.max) {
+                z += '<td colspan="' + (!!(i % opt.col) ? ((opt.col + 1) - (opt.max % opt.col)) : 0) + '">' + num[0] + types[type].symbol + num[1] + '=</td></tr>';
+            } else if (!(i % opt.col)) {
+                z += '<td >' + num[0] + types[type].symbol + num[1] + '=</td></tr><tr>';
+            } else {
+                z += '<td>' + num[0] + types[type].symbol + num[1] + '=</td>';
+            }
+        }
+        return page.innerHTML = z;
+//        console.log(JSON.stringify(y))
+    }
+
+    make({
+        type: ['addition'],
+        range: 10,
+        col: 5,
+        max: 100
+    })
+
+    //    make().forEach(function (item, index, arr) {
+    //        console.log(item)
+    //    })
+
+    $('#export').on('click', function () {
+        $("#page").wordExport('haha');
+
+    });
+
+    var $checkbox = $('input:checkbox');
+
+    $('.sidebar').on('click', "#make", function () {
+        var makeType = [];
+        var range = +$('#range').val(); //+ 把字符串变成number
+        $checkbox.each(function () {
+            $(this).is(':checked') && makeType.push($(this).prop('value'))
+        });
+
+        make({
+            type: makeType,
+            range: range,
+            col: 5,
+            max: 100
+        })
+    }).on('click', 'input:checkbox', function () {
+        var text = '';
+        if (!$checkbox.is(':checked')) {
+            $(this).prop('checked', true)
+        }
+        $checkbox.each(function (index) {
+            if ($(this).is(':checked')) {
+                text += $(this).next().text() + '/';
+            }
+        });
+        $('#j-text').text(text.replace(/\/$/, ''))
+    }).on('click', '#print', function () {
+        window.print();
+    })
+
+</script>
+</body>
+</html>

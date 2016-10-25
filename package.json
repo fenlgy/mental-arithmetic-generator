@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "fis3 release -wLd ./dist",
+    "start": "npm run serve && npm run dev",
+    "serve": "fis3 server start --root ./dist",
+    "stop": "fis3 server stop"
   },
   "repository": {
     "type": "git",
@@ -15,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/fenlgy/mental-arithmetic-generator/issues"
   },
-  "homepage": "https://github.com/fenlgy/mental-arithmetic-generator#readme"
+  "homepage": "https://github.com/fenlgy/mental-arithmetic-generator#readme",
+  "devDependencies": {
+    "fis-postprocessor-autoprefixer": "0.0.5",
+    "fis3-parser-less-2.x": "^0.1.4"
+  }
 }
