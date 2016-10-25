@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="/static/styles/index.less">
+    <title>幼儿口算题在线生成工具-可下载或在线打印</title>
+    <link rel="stylesheet" href="/static/styles/index.less?__inline">
 <body>
 <div id="header">
     <div class="wrapper"><h1>幼儿口算题在线生成工具</h1></div>
@@ -20,10 +20,16 @@
                 <input type="checkbox" id="addition" value="addition" checked><label for="addition">加法</label>
                 <input type="checkbox" id="subtraction" value="subtraction"><label for="subtraction">减法</label>
                 <input type="checkbox" id="division" value="division"><label for="division">除法</label>
-                <!--<input type="checkbox" id="multiplication" value="multiplication"><label for="multiplication">乘法</label>-->
+                <input type="checkbox" id="multiplication" value="multiplication"><label for="multiplication">乘法</label>
             </div>
             <div class="form__line">
-                <input type="text" value="10" id="range"> 以内<span id="j-text">加法</span>
+                <input type="text" value="0" id="rangeMin"> - <input type="text" value="10" id="rangeMax"> 以内<span id="j-text">加法</span>
+            </div>
+            <div class="form__line">
+                <input type="text" value="4" id="col"> 列
+            </div>
+            <div class="form__line">
+                <input type="text" value="100" id="itemNum"> 道题/页
             </div>
             <div class="form__line">
                 <button id="make" class="btn">重新生成</button>
@@ -36,8 +42,8 @@
 </div>
 
 <script src="//cdn.bootcss.com/jquery/1.10.2/jquery.js"></script>
-<script src="js/FileSaver.js"></script>
-<script src="js/jquery-word-export.js"></script>
+<script src="/static/libs/FileSaver.js"></script>
+<script src="/static/libs/jquery-word-export.js"></script>
 <script>
 
     var make = function (opt) {
@@ -54,15 +60,15 @@
         var types = {
             addition: {
                 fn: function () {
-                    var x = randomNum(range);
-                    var y = randomNum(range - x);
+                    var x = randomNum(range.min,range.max);
+                    var y = randomNum(range.max - x);
                     return [x, y]
                 },
                 symbol: '+'
             },
             subtraction: {
                 fn: function () {
-                    var x = randomNum(range);
+                    var x = randomNum(range.min,range.max);
                     var y = randomNum(x)
                     return [x, y]
                 },
@@ -70,13 +76,12 @@
             },
             division: {
                 fn: function () {
-                    var x = randomNum(4,range);
+                    var x = randomNum(range.min,range.max);
                     var y = randomNum(2,x );
                     var i = x % y;
-console.log(x)
 
                     while (!!i) {
-                        x = randomNum(3,range);
+                        x = randomNum(range.min,range.max);
                         y = randomNum(1,x);
                         i = x % y;
                     }
@@ -85,8 +90,17 @@ console.log(x)
                 symbol: '÷'
             },
             multiplication: {
-                fn: function (x) {
-                    return randomNum(range / x);
+                fn: function () {
+                    var x = randomNum(range.min,range.max);
+                    var y = randomNum(range.min,range.max);
+                    var i = x * y;
+
+                    while (i > range) {
+                        x = randomNum(range.min,range.max);
+                        y = randomNum(range.min,range.max);
+                        i = x * y;
+                    }
+                    return [x, y];
                 },
                 symbol: '×'
             }
@@ -109,8 +123,11 @@ console.log(x)
 
     make({
         type: ['addition'],
-        range: 10,
-        col: 5,
+        range: {
+            min:0,
+            max:10
+        },
+        col: 4,
         max: 100
     })
 
@@ -127,7 +144,10 @@ console.log(x)
 
     $('.sidebar').on('click', "#make", function () {
         var makeType = [];
-        var range = +$('#range').val(); //+ 把字符串变成number
+        var range = {
+            min:+$('#rangeMin').val(), //+ 把字符串变成number
+            max:+$('#rangeMax').val() //+ 把字符串变成number
+        }
         $checkbox.each(function () {
             $(this).is(':checked') && makeType.push($(this).prop('value'))
         });
@@ -135,8 +155,8 @@ console.log(x)
         make({
             type: makeType,
             range: range,
-            col: 5,
-            max: 100
+            col: +$('#col').val(),
+            max: +$('#itemNum').val()
         })
     }).on('click', 'input:checkbox', function () {
         var text = '';

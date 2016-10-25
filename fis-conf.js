@@ -4,31 +4,14 @@ fis.project.setProjectRoot('./app')
 // set 为覆盖不是叠加,默认值：['node_modules/**', 'output/**', 'fis-conf']
 fis.set('project.ignore', [
     'dist/**',
-    'static/**'
+    'static/styles/**'
 ]);
 
 //编译less
 fis.match('/static/styles/*.less', {
     rExt: '.css',
     parser: fis.plugin("less-2.x",{
-        sourceMap: {
-            //sourceMapURL: "./map",
-            sourceMapFileInline: true
-            //outputSourceFiles: true
-        }
-    }),
-    postprocessor: fis.plugin('autoprefixer', {
-        browsers: ['ie >= 6',
-            'ie_mob >= 6',
-            'ff >= 29',
-            'chrome >= 21',
-            'safari >= 6',
-            'opera >= 22',
-            'ios >= 7',
-            'android >= 4.4',
-            'bb >= 10'],
-        remove: false,
-        cascade: true
+
     })
 })
 

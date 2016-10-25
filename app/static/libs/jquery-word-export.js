@@ -61,7 +61,7 @@ if (typeof jQuery !== "undefined" && typeof saveAs !== "undefined") {
             }
             mhtmlBottom += "--NEXT.ITEM-BOUNDARY--";
 
-            //TODO: load css from included stylesheet
+            //load css from included stylesheet
             var styles = $('style').text();
 
             // Aggregate parts of the file together
