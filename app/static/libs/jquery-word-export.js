@@ -62,7 +62,9 @@ if (typeof jQuery !== "undefined" && typeof saveAs !== "undefined") {
             mhtmlBottom += "--NEXT.ITEM-BOUNDARY--";
 
             //load css from included stylesheet
-            var styles = $('style').text();
+            //提取 @media print 中的css
+            var styles = $('style').text().match(/@media print.*\{([\s\S]*)\}/)[1];
+            // console.log(styles)
 
             // Aggregate parts of the file together
             var fileContent = static.mhtml.top.replace("_html_", static.mhtml.head.replace("_styles_", styles) + static.mhtml.body.replace("_body_", markup.html())) + mhtmlBottom;
