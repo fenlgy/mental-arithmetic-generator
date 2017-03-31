@@ -8,7 +8,9 @@
     "dev": "fis3 release -wLd ./dist",
     "start": "npm run serve & npm run dev",
     "serve": "fis3 server start --root ./dist",
-    "stop": "fis3 server stop"
+    "release": "fis3 release prod -d ./release",
+    "stop": "fis3 server stop",
+    "rimraf": "rimraf release"
   },
   "repository": {
     "type": "git",
@@ -21,7 +23,10 @@
   },
   "homepage": "https://github.com/fenlgy/mental-arithmetic-generator#readme",
   "devDependencies": {
+    "fis-optimizer-html-compress": "0.0.7",
     "fis-postprocessor-autoprefixer": "0.0.5",
-    "fis3-parser-less-2.x": "^0.1.4"
+    "fis3-parser-less-2.x": "^0.1.4",
+    "fis3-postpackager-loader": "^2.1.4",
+    "rimraf": "^2.5.4"
   }
 }

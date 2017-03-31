@@ -6,4 +6,6 @@
 .idea
 *.iml
 /node_modules
+/dist
+/release
 server.log

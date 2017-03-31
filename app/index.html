@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>幼儿口算题在线生成工具-可下载或在线打印</title>
+    <title>幼儿/小学口算题在线生成工具-可下载或在线打印</title>
     <link rel="stylesheet" href="/static/styles/index.less?__inline">
 <body>
 <div id="header">
-    <div class="wrapper"><h1>幼儿口算题在线生成工具</h1></div>
+    <div class="wrapper"><h1>幼儿/小学口算题在线生成工具 - 可下载word文件</h1></div>
 </div>
 <div class="bg">
     <div class="wrapper">
@@ -17,24 +17,29 @@
         </div>
         <div class="sidebar">
             <div class="form__line">
-                <input type="checkbox" id="addition" value="addition" checked><label for="addition">加法</label>
-                <input type="checkbox" id="subtraction" value="subtraction"><label for="subtraction">减法</label>
-                <input type="checkbox" id="division" value="division"><label for="division">除法</label>
+                <input type="checkbox" id="addition10" value="addition10" checked><label for="addition10">10以内加法</label>
+                <input type="checkbox" id="subtraction10" value="subtraction10"><label for="subtraction10">10以内减法</label>
+                <input type="checkbox" id="additionJW" value="additionJW" ><label for="additionJW">进位加法</label>
+                <input type="checkbox" id="subtractionTW" value="subtractionTW"><label for="subtractionTW">退位减法</label>
+                <!--<input type="checkbox" id="division" value="division"><label for="division">除法</label>-->
                 <input type="checkbox" id="multiplication" value="multiplication"><label for="multiplication">乘法</label>
             </div>
+            <!--<div class="form__line">-->
+                <!--<input type="text" value="0" id="rangeMin"> - <input type="text" value="10" id="rangeMax"> 以内<span id="j-text">加法</span>-->
+            <!--</div>-->
             <div class="form__line">
-                <input type="text" value="0" id="rangeMin"> - <input type="text" value="10" id="rangeMax"> 以内<span id="j-text">加法</span>
-            </div>
-            <div class="form__line">
-                <input type="text" value="4" id="col"> 列
-            </div>
-            <div class="form__line">
-                <input type="text" value="100" id="itemNum"> 道题/页
+                <!--<input type="text" value="4" id="col"> 列  /-->
+                <input type="text" value="10" id="itemNum"> 页(100道题每页)
             </div>
             <div class="form__line">
                 <button id="make" class="btn">重新生成</button>
                 <button id="print" class="btn">直接打印</button>
                 <button id="export" class="btn btn--normal">下载 word 文件</button>
+
+
+            </div>
+            <div class="form__line">
+                <a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=JUNAS0lCXGVTTFULVFQLRkpI" style="text-decoration:none;"><img src="http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_12.png"/></a>
             </div>
 
         </div>
@@ -46,6 +51,9 @@
 <script src="/static/libs/jquery-word-export.js"></script>
 <script>
 
+    var extendNum = function (x,y) {
+        return +(x.toString() + y.toString())
+    }
     var make = function (opt) {
         var page = document.getElementById('data-table');
         var z = '<tr>';
@@ -66,6 +74,23 @@
                 },
                 symbol: '+'
             },
+            addition10: {
+                fn: function () {
+                    var x = randomNum(1,9);
+                    var y = randomNum(9-x)
+                    return [x, y]
+                },
+                symbol: '+'
+            },
+            additionJW: {
+                fn: function () {
+                    var x = randomNum(1,8);
+                    var z = randomNum(1,9)
+                    var y = randomNum(10-z,9)
+                    return [extendNum(x,z), y]
+                },
+                symbol: '+'
+            },
             subtraction: {
                 fn: function () {
                     var x = randomNum(range.min,range.max);
@@ -74,45 +99,59 @@
                 },
                 symbol: '-'
             },
+            subtraction10: {
+                fn: function () {
+                    var x = randomNum(0,9);
+                    var y = randomNum(x)
+                    return [x, y]
+                },
+                symbol: '-'
+            },
+            subtractionTW: {
+                fn: function () {
+                    var x = randomNum(0,8);
+                    var z = randomNum(0,8);
+                    var y = randomNum(z,9)
+                    return [extendNum(x,z), y]
+                },
+                symbol: '-'
+            },
             division: {
                 fn: function () {
                     var x = randomNum(range.min,range.max);
                     var y = randomNum(2,x );
                     var i = x % y;
-
-                    while (!!i) {
-                        x = randomNum(range.min,range.max);
-                        y = randomNum(1,x);
-                        i = x % y;
-                    }
+//
+//                    while (!!i) {
+//                        x = randomNum(range.min,range.max);
+//                        y = randomNum(1,x);
+//                        i = x % y;
+//                    }
                     return [x, y];
                 },
                 symbol: '÷'
             },
             multiplication: {
                 fn: function () {
-                    var x = randomNum(range.min,range.max);
-                    var y = randomNum(range.min,range.max);
-                    var i = x * y;
+                    var x = randomNum(0,9);
+                    var y = randomNum(1,9);
 
-                    while (i > range) {
-                        x = randomNum(range.min,range.max);
-                        y = randomNum(range.min,range.max);
-                        i = x * y;
-                    }
                     return [x, y];
                 },
                 symbol: '×'
             }
         };
 
+//        生成右侧题目
         for (var i = 1; i <= opt.max; i++) {
             var type = opt.type[Math.floor(Math.random() * opt.type.length)];
             var num = types[type].fn();
             if (i == opt.max) {
-                z += '<td colspan="' + (!!(i % opt.col) ? ((opt.col + 1) - (opt.max % opt.col)) : 0) + '">' + num[0] + types[type].symbol + num[1] + '=</td></tr>';
+                //最后一个td 需要判断是否加 colspan
+                z += '<td  height="32" colspan="' + (!!(i % opt.col) ? ((opt.col + 1) - (opt.max % opt.col)) : 0) + '">' + num[0] + types[type].symbol + num[1] + '=</td></tr>';
             } else if (!(i % opt.col)) {
-                z += '<td >' + num[0] + types[type].symbol + num[1] + '=</td></tr><tr>';
+//                一行后面加上tr
+                z += '<td  height="32">' + num[0] + types[type].symbol + num[1] + '=</td></tr><tr>';
             } else {
                 z += '<td>' + num[0] + types[type].symbol + num[1] + '=</td>';
             }
@@ -121,15 +160,6 @@
 //        console.log(JSON.stringify(y))
     }
 
-    make({
-        type: ['addition'],
-        range: {
-            min:0,
-            max:10
-        },
-        col: 4,
-        max: 100
-    })
 
     //    make().forEach(function (item, index, arr) {
     //        console.log(item)
@@ -155,9 +185,11 @@
         make({
             type: makeType,
             range: range,
-            col: +$('#col').val(),
-            max: +$('#itemNum').val()
+//            col: +$('#col').val(), 自定义列感觉没必要去掉先
+            col: 4,
+            max: +$('#itemNum').val() * 100
         })
+
     }).on('click', 'input:checkbox', function () {
         var text = '';
         if (!$checkbox.is(':checked')) {
@@ -168,10 +200,22 @@
                 text += $(this).next().text() + '/';
             }
         });
-        $('#j-text').text(text.replace(/\/$/, ''))
+        $('#j-text').text(text.replace(/\/$/, ''));
+        $('#make').trigger('click')
+
     }).on('click', '#print', function () {
         window.print();
     })
+
+    $('#itemNum').keypress(function (e) {
+       console.log(e.keyCode)
+        if(e.keyCode == 13){
+            $('#make').trigger('click')
+        }
+    })
+
+    // 初始值
+    $('#make').trigger('click')
 
 </script>
 </body>
